@@ -93,11 +93,11 @@ public class NotificationHubUtil {
     }
 
     public boolean isTemplated(Context context) {
-        return getPref(context, KEY_FOR_PREFS_TEMPLATE);
+        return getPrefBoolean(context, KEY_FOR_PREFS_TEMPLATE);
     }
 
     public void setTemplated(Context context, boolean templated) {
-        setPref(context, KEY_FOR_PREFS_TEMPLATE, templated);
+        setPrefBoolean(context, KEY_FOR_PREFS_TEMPLATE, templated);
     }
 
     private String getPref(Context context, String key) {
@@ -106,7 +106,7 @@ public class NotificationHubUtil {
         return prefs.getString(key, null);
     }
 
-    private boolean getPref(Context context, String key) {
+    private boolean getPrefBoolean(Context context, String key) {
         SharedPreferences prefs =
                 context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getBoolean(key, false);
@@ -125,7 +125,7 @@ public class NotificationHubUtil {
         editor.apply();
     }
 
-    private void setPref(Context context, String key, boolean value) {
+    private void setPrefBoolean(Context context, String key, boolean value) {
         SharedPreferences.Editor editor =
                 context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE).edit();
         editor.putBoolean(key, value);

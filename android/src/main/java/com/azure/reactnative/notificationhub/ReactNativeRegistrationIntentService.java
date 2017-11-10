@@ -52,7 +52,7 @@ public class ReactNativeRegistrationIntentService extends IntentService {
                 Log.d(TAG, "NH Registration refreshing with token : " + token);
 
                 if (isTemplated) {
-                    regID = hub.register(token, templateName, template, tags).getRegistrationId();
+                    regID = hub.registerTemplate(token, templateName, template, tags).getRegistrationId();
                 } else {
                     regID = hub.register(token, tags).getRegistrationId();
                 }
