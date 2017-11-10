@@ -216,7 +216,7 @@ class AzureNotificationHubIOS {
    */
   static addEventListener(type: PushNotificationEventName, handler: Function) {
     invariant(
-      type === 'notification' || type === 'register' || type === 'registrationError' || 
+      type === 'notification' || type === 'register' || type === 'registrationError' ||
       type === 'registerAzureNotificationHub' || type === 'azureNotificationHubRegistrationError' || type === 'localNotification',
       'AzureNotificationHubIOS only supports `notification`, `register`, `registrationError`, `registerAzureNotificationHub`, `azureNotificationHubRegistrationError` and `localNotification` events'
     );
@@ -273,7 +273,7 @@ class AzureNotificationHubIOS {
    */
   static removeEventListener(type: PushNotificationEventName, handler: Function) {
     invariant(
-      type === 'notification' || type === 'register' || type === 'registrationError' || 
+      type === 'notification' || type === 'register' || type === 'registrationError' ||
       type === 'registerAzureNotificationHub' || type === 'azureNotificationHubRegistrationError' || type === 'localNotification',
       'AzureNotificationHubIOS only supports `notification`, `register`, `registrationError`, `registerAzureNotificationHub`, `azureNotificationHubRegistrationError` and `localNotification` events'
     );
@@ -361,8 +361,16 @@ class AzureNotificationHubIOS {
     RCTAzureNotificationHubManager.register(deviceToken, config);
   }
 
+  static registerTemplate(deviceToken, config) {
+    RCTAzureNotificationHubManager.registerTemplate(deviceToken, config);
+  }
+
   static unregister() {
     RCTAzureNotificationHubManager.unregister();
+  }
+
+  static unregisterTemplate(templateName) {
+    RCTAzureNotificationHubManager.unregisterTemplate(templateName);
   }
 
   /**

@@ -22,6 +22,10 @@ public class NotificationHubUtil {
             "AzureNotificationHub_FCMToken";
     private static final String KEY_FOR_PREFS_TAGS =
             "AzureNotificationHub_Tags";
+    private static final String KEY_FOR_PREFS_TEMPLATE_NAME =
+            "AzureNotificationHub_TemplateName";
+    private static final String KEY_FOR_PREFS_TEMPLATE =
+            "AzureNotificationHub_Template";
 
     public static NotificationHubUtil getInstance() {
         if(sharedNotificationHubUtilInstance == null) {
@@ -72,10 +76,40 @@ public class NotificationHubUtil {
         setPrefSet(context, KEY_FOR_PREFS_TAGS, set);
     }
 
+    public String getTemplateName(Context context) {
+        return getPref(context, KEY_FOR_PREFS_TEMPLATE_NAME);
+    }
+
+    public void setTemplateName(Context context, String templateName) {
+        setPref(context, KEY_FOR_PREFS_TEMPLATE_NAME, templateName);
+    }
+
+    public String getTemplate(Context context) {
+        return getPref(context, KEY_FOR_PREFS_TEMPLATE);
+    }
+
+    public void setTemplate(Context context, String template) {
+        setPref(context, KEY_FOR_PREFS_TEMPLATE, template);
+    }
+
+    public boolean isTemplated(Context context) {
+        return getPref(context, KEY_FOR_PREFS_TEMPLATE);
+    }
+
+    public void setTemplated(Context context, boolean templated) {
+        setPref(context, KEY_FOR_PREFS_TEMPLATE, templated);
+    }
+
     private String getPref(Context context, String key) {
         SharedPreferences prefs =
                 context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getString(key, null);
+    }
+
+    private boolean getPref(Context context, String key) {
+        SharedPreferences prefs =
+                context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getBoolean(key, false);
     }
 
     private Set<String> getPrefSet(Context context, String key) {
@@ -88,6 +122,13 @@ public class NotificationHubUtil {
         SharedPreferences.Editor editor =
                 context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE).edit();
         editor.putString(key, value);
+        editor.apply();
+    }
+
+    private void setPref(Context context, String key, boolean value) {
+        SharedPreferences.Editor editor =
+                context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE).edit();
+        editor.putBoolean(key, value);
         editor.apply();
     }
 

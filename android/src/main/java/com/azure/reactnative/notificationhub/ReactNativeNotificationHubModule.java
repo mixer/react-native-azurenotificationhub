@@ -89,6 +89,72 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
     }
 
     @ReactMethod
+    public void registerTemplate(ReadableMap config, Promise promise) {
+        NotificationHubUtil notificationHubUtil = NotificationHubUtil.getInstance();
+        String connectionString = config.getString("connectionString");
+        if (connectionString == null) {
+            promise.reject(ERROR_INVALID_ARGUMENTS, "Connection string cannot be null.");
+        }
+
+        String hubName = config.getString("hubName");
+        if (hubName == null) {
+            promise.reject(ERROR_INVALID_ARGUMENTS, "Hub name cannot be null.");
+        }
+
+        String senderID = config.getString("senderID");
+        if (senderID == null) {
+            promise.reject(ERROR_INVALID_ARGUMENTS, "Sender ID cannot be null.");
+        }
+
+        String templateName = config.getString("templateName");
+        if (templateName == null) {
+            promise.reject(ERROR_INVALID_ARGUMENTS, "Template Name cannot be null.");
+        }
+
+        String template = config.getString("template");
+        if (template == null) {
+            promise.reject(ERROR_INVALID_ARGUMENTS, "Template cannot be null.");
+        }
+
+        String[] tags = null;
+        if (config.hasKey("tags") && !config.isNull("tags")) {
+            ReadableArray tagsJson = config.getArray("tags");
+            tags = new String[tagsJson.size()];
+            for (int i = 0; i < tagsJson.size(); ++i) {
+                tags[i] = tagsJson.getString(i);
+            }
+        }
+
+        ReactContext reactContext = getReactApplicationContext();
+        notificationHubUtil.setConnectionString(reactContext, connectionString);
+        notificationHubUtil.setHubName(reactContext, hubName);
+        notificationHubUtil.setTags(reactContext, tags);
+        notificationHubUtil.setTemplateName(reactContext, templateName);
+        notificationHubUtil.setTemplate(reactContext, template);
+        notificationHubUtil.setTemplated(reactContext, true);
+
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        int resultCode = apiAvailability.isGooglePlayServicesAvailable(reactContext);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (apiAvailability.isUserResolvableError(resultCode)) {
+                UiThreadUtil.runOnUiThread(
+                        new GoogleApiAvailabilityRunnable(
+                                getCurrentActivity(),
+                                apiAvailability,
+                                resultCode));
+                promise.reject(ERROR_PLAY_SERVICES, "User must enable Google Play Services.");
+            } else {
+                promise.reject(ERROR_PLAY_SERVICES, "This device is not supported by Google Play Services.");
+            }
+            return;
+        }
+
+        Intent intent = new Intent(reactContext, ReactNativeRegistrationIntentService.class);
+        reactContext.startService(intent);
+        NotificationsManager.handleNotifications(reactContext, senderID, ReactNativeNotificationsHandler.class);
+    }
+
+    @ReactMethod
     public void unregister(Promise promise) {
         NotificationHubUtil notificationHubUtil = NotificationHubUtil.getInstance();
 
@@ -104,6 +170,29 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
         NotificationHub hub = new NotificationHub(hubName, connectionString, reactContext);
         try {
             hub.unregister();
+            notificationHubUtil.setRegistrationID(reactContext, null);
+            NotificationsManager.stopHandlingNotifications(reactContext);
+        } catch (Exception e) {
+            promise.reject(ERROR_NOTIFICATION_HUB, e);
+        }
+    }
+
+    @ReactMethod
+    public void unregisterTemplate(String templateName, Promise promise) {
+        NotificationHubUtil notificationHubUtil = NotificationHubUtil.getInstance();
+
+        ReactContext reactContext = getReactApplicationContext();
+        String connectionString = notificationHubUtil.getConnectionString(reactContext);
+        String hubName = notificationHubUtil.getHubName(reactContext);
+        String registrationId = notificationHubUtil.getRegistrationID(reactContext);
+
+        if (connectionString == null || hubName == null || registrationId == null) {
+            promise.reject(ERROR_NOT_REGISTERED, "No registration to Azure Notification Hub.");
+        }
+
+        NotificationHub hub = new NotificationHub(hubName, connectionString, reactContext);
+        try {
+            hub.unregisterTemplate(templateName);
             notificationHubUtil.setRegistrationID(reactContext, null);
             NotificationsManager.stopHandlingNotifications(reactContext);
         } catch (Exception e) {

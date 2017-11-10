@@ -26,6 +26,13 @@ public class ReactNativeRegistrationIntentService extends IntentService {
             String regID = notificationHubUtil.getRegistrationID(this);
             String storedToken = notificationHubUtil.getFCMToken(this);
             String[] tags = notificationHubUtil.getTags(this);
+            boolean isTemplated = notificationHubUtil.isTemplated(this);
+            String templateName, template;
+
+            if (isTemplated) {
+                templateName = notificationHubUtil.getTemplateName(this);
+                template = notificationHubUtil.getTemplate(this);
+            }
 
             if (connectionString == null || hubName == null) {
                 // The intent was triggered when no connection string has been set.
@@ -43,7 +50,12 @@ public class ReactNativeRegistrationIntentService extends IntentService {
             if (regID == null || storedToken != token) {
                 NotificationHub hub = new NotificationHub(hubName, connectionString, this);
                 Log.d(TAG, "NH Registration refreshing with token : " + token);
-                regID = hub.register(token, tags).getRegistrationId();
+
+                if (isTemplated) {
+                    regID = hub.register(token, templateName, template, tags).getRegistrationId();
+                } else {
+                    regID = hub.register(token, tags).getRegistrationId();
+                }
 
                 Log.d(TAG, "New NH Registration Successfully - RegId : " + regID);
 
