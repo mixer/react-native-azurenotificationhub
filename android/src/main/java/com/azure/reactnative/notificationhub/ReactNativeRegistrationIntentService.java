@@ -27,12 +27,8 @@ public class ReactNativeRegistrationIntentService extends IntentService {
             String storedToken = notificationHubUtil.getFCMToken(this);
             String[] tags = notificationHubUtil.getTags(this);
             boolean isTemplated = notificationHubUtil.isTemplated(this);
-            String templateName, template;
-
-            if (isTemplated) {
-                templateName = notificationHubUtil.getTemplateName(this);
-                template = notificationHubUtil.getTemplate(this);
-            }
+            String templateName = notificationHubUtil.getTemplateName(this);
+            String template = notificationHubUtil.getTemplate(this);
 
             if (connectionString == null || hubName == null) {
                 // The intent was triggered when no connection string has been set.

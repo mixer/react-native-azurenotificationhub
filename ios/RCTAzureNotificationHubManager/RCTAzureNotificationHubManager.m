@@ -34,6 +34,8 @@ NSString *const RCTErrorInvalidArguments                        = @"E_INVALID_AR
 
 // Keys
 NSString *const RCTConnectionStringKey                          = @"connectionString";
+NSString *const RCTTemplateName                                 = @"templateName";
+NSString *const RCTTemplate                                     = @"template";
 NSString *const RCTHubNameKey                                   = @"hubName";
 NSString *const RCTTagsKey                                      = @"tags";
 
