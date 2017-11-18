@@ -562,6 +562,9 @@ RCT_EXPORT_METHOD(unregister:(RCTPromiseResolveBlock)resolve
                 [[NSNotificationCenter defaultCenter] postNotificationName:RCTErrorUnspecified
                                                                     object:self
                                                                   userInfo:@{@"error": error}];
+                reject(@"UNREGISTER_FAILED", @"Failed to unregister", error);
+            } else {
+                resolve(nil);
             }
         }];
     });
@@ -591,6 +594,9 @@ RCT_EXPORT_METHOD(unregisterTemplate:(NSString *)templateName
                 [[NSNotificationCenter defaultCenter] postNotificationName:RCTErrorUnspecified
                                                                     object:self
                                                                   userInfo:@{@"error": error}];
+                reject(@"UNREGISTER_FAILED", @"Failed to unregister template", error);
+            } else {
+                resolve(nil);
             }
         }];
     });
